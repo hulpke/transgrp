@@ -1,0 +1,8 @@
+C transgrp.tex 1. The Library of Transitive Groups
+S 1.1. Transitive Permutation Groups
+F 1.1. TransitiveGroup
+F 1.1. NrTransitiveGroups
+F 1.1. TransitiveIdentification
+S 1.2. Selection Functions
+F 1.2. AllTransitiveGroups
+F 1.2. OneTransitiveGroup

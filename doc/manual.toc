@@ -1,0 +1,4 @@
+\chapcontents {1}{The Library of Transitive Groups}{3}
+\seccontents {1.1}{Transitive Permutation Groups} {3}
+\seccontents {1.2}{Selection Functions} {4}
+\chapcontents {}{Bibliography}{5}
