@@ -10,7 +10,7 @@
 
 Unbind(TRANSGRP);
 Unbind(TRANSPROPERTIES);
-BindGlobal("TRANSDIR",DirectoriesPackageLibrary( "transgrp", "data" )); 
+Unbind(TRANSAVAILABLE);
 
 #############################################################################
 ##
@@ -212,26 +212,37 @@ TRANSSIZES  :=[];
 TRANSPARTNUM:=[];
 InstallFlushableValue(TRANSSHAPEFREQS,[]);
 
-if not IsBound(TRANSDEGREES) or TRANSDEGREES=0 then
-  TRANSDEGREES :=7;
-  HideGlobalVariables("dir","fnam");
-  dir:= TRANSDIR;
-  fnam:=Filename( dir, Concatenation("trans",String(TRANSDEGREES+1),".grp"));
-  while fnam<>fail and IsReadableFile(fnam) do
-    TRANSDEGREES:=TRANSDEGREES+1;
-    fnam:=Filename( dir, Concatenation("trans",String(TRANSDEGREES+1),".grp"));
+if not IsBound(TRANSAVAILABLE) or Length(TRANSAVAILABLE)=0 then
+  TRANSAVAILABLE:=BlistList([1..50],[2..7]);
+  HideGlobalVariables("dir","fnam","tradeg");
+  for tradeg in [8..48] do
+    if tradeg=32 then
+      dir:= DirectoriesPackageLibrary( "transgrp", "dat32" ); 
+    else
+      dir:= DirectoriesPackageLibrary( "transgrp", "data" ); 
+    fi;
+    fnam:=Filename( dir, Concatenation("trans",String(tradeg),".grp"));
+    if fnam<>fail and IsReadableFile(fnam) then
+      TRANSAVAILABLE[tradeg]:=true;
+    fi;
   od;
-  UnhideGlobalVariables("dir","fnam");
+  UnhideGlobalVariables("dir","fnam","tradeg");
 fi;
 
 BIND_GLOBAL("TransGrpLoad",function(deg,nr)
-local Tbak,Fbak,flg,sel,i,fname;
+local Tbak,Fbak,flg,sel,i,fname,block,transdir;
+  block:=300;
+  if deg=32 or deg=36 then block:=5000;fi;
+  if deg=32 then
+    transdir:= DirectoriesPackageLibrary( "transgrp", "dat32" ); 
+  else
+    transdir:= DirectoriesPackageLibrary( "transgrp", "data" ); 
+  fi;
   if IsBound(TRANSGRP[deg]) and (nr=0 or IsBound(TRANSGRP[deg][nr])) then
     return;
   fi;
-  if deg>TRANSDEGREES then
-    Error("transitive groups are known only of degree up to ",
-	  TRANSDEGREES);
+  if not IsBound(TRANSAVAILABLE[deg]) or TRANSAVAILABLE[deg]=false then
+    Error("transitive groups of degree ",deg," are unavailable");
   else
     HideGlobalVariables("T","F");
     BIND_GLOBAL("T",true);
@@ -239,7 +250,7 @@ local Tbak,Fbak,flg,sel,i,fname;
     fname:=Concatenation("trans",String(deg));
     if deg>15 and not IsPrime(deg) then
       if not IsBound(TRANSGRP[deg]) then
-	Read(Filename(TRANSDIR,Concatenation( fname, ".grp" ) ));
+	Read(Filename(transdir,Concatenation( fname, ".grp" ) ));
         if nr=0 then 
 	  UnhideGlobalVariables("T","F");
 	  return;
@@ -248,8 +259,8 @@ local Tbak,Fbak,flg,sel,i,fname;
 	# the groups to be thrown away
 	sel:=Difference(Filtered([1..Length(TRANSGRP[deg])],
 	                  i->IsBound(TRANSGRP[deg])),TRANSSELECT[deg]);
-	if Length(TRANSSELECT[deg])>300 then
-	  flg:=TRANSSELECT[deg]{[1..Length(TRANSSELECT[deg])-150]};
+	if Length(TRANSSELECT[deg])>block then
+	  flg:=TRANSSELECT[deg]{[1..Length(TRANSSELECT[deg])-block/2]};
 	  sel:=Union(flg,sel);
 	  TRANSSELECT[deg]:=Difference(TRANSSELECT[deg],flg);
 	fi;
@@ -258,12 +269,12 @@ local Tbak,Fbak,flg,sel,i,fname;
 	  Unbind(TRANSPROPERTIES[deg][i]);
 	od;
       fi;
-      Append(fname,WordAlp("abcdefghijklmnopqrstuvwxyz",Int((nr-1)/300)+1));
+      Append(fname,WordAlp("abcdefghijklmnopqrstuvwxyz",Int((nr-1)/block)+1));
     fi;
 
     IsString(fname);
 
-    Read(Filename(TRANSDIR,Concatenation( fname, ".grp" ) ));
+    Read(Filename(transdir,Concatenation( fname, ".grp" ) ));
 
     UnhideGlobalVariables("T","F");
 
@@ -287,7 +298,7 @@ local Tbak,Fbak,flg,sel,i,fname;
 end);
 
 InstallGlobalFunction(TransitiveGroupsAvailable,function(deg)
-  if deg>TRANSDEGREES then
+  if not IsBound(TRANSAVAILABLE[deg]) or TRANSAVAILABLE[deg]=false then
     return false;
   fi;
   TransGrpLoad(deg,0); # to set up variables
@@ -340,22 +351,16 @@ InstallGlobalFunction(NrTransitiveGroups, function(deg)
   if not TransitiveGroupsAvailable(deg) then
     return 0;
   fi;
-  if not IsBound(TRANSLENGTHS[deg]) then
-    TransGrpLoad(deg,0);
-  fi;
   return TRANSLENGTHS[deg];
 end);
 
 InstallGlobalFunction( TransitiveGroup, function(deg,num)
   local gens,i,l,g,s;
-  if not(deg in [1..TRANSDEGREES]) then
-    Error("degree must be in [1..",TRANSDEGREES,"]");
-  fi;
   if deg=1 then
     return fail;
   fi;
-  if not IsBound(TRANSLENGTHS[deg]) then
-    TransGrpLoad(deg,num);
+  if not TransitiveGroupsAvailable(deg) then
+    Error("Transitive Groups of degree ",deg," are not available");
   fi;
   if not (num in [1..TRANSLENGTHS[deg]]) then
     Error("maximal number of groups of degree ",deg," is ",
@@ -686,7 +691,8 @@ local i,j,a,b,l,p,deg,gut,g,grp,nr,f;
   if not IsInt(l) then
     Error("wrong arguments");
   fi;
-  deg:=[2..TRANSDEGREES];
+  deg:=Filtered([1..Length(TRANSAVAILABLE)],x->IsBound(TRANSAVAILABLE[x])
+    and TRANSAVAILABLE[x]=true);
   p:=Position(arglis,NrMovedPoints);
   if p<>fail then
     p:=arglis[p+1];
@@ -776,8 +782,7 @@ local i,j,a,b,l,p,deg,gut,g,grp,nr,f;
   od;
 
   if f then
-    Print("#W  AllTransitiveGroups: Degree restricted to [2..",
-          TRANSDEGREES,"]\n");
+    Info(InfoWarning,1,"AllTransitiveGroups: Degree restricted to ",deg);
   fi;
 
   # the rest is hard:  
