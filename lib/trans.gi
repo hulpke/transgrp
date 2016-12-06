@@ -22,9 +22,11 @@ local dom,deg,S,p,ps,perm,startp,sdps,nsdps,i,j,k,l,m,n,part,
     return p;
   fi;
 
-  if not TransitiveGroupsAvailable(deg) then
+  if not TransitiveGroupsAvailable(deg) or
+    ValueOption("NoPrecomputedData")=true then
     TryNextMethod();
   fi;
+  Info(InfoPerformance,2,"Using Transitive Groups Library");
 
   S:=SymmetricGroup(deg);
 
