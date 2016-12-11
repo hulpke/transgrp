@@ -2,15 +2,11 @@
 ##
 #A  trans35a.grp                 GAP group library           Alexander Hulpke
 ##
-#A  @(#)$Id:$
-##
 #Y  Copyright (C) 2014, Derek Holt, University of Warwick
 #Y  Converted by Alexander Hulpke
 ##
 ##  This file contains part of the transitive groups of degree 35
 ##
-Revision.trans35a_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[35]{[1..300]}:=
 [[(1,15,24,33,7,16,30,4,13,22,31,10,19,28,2,11,25,34,8,17,26,5,14,23,32,6,20,

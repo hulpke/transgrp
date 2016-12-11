@@ -2,15 +2,11 @@
 ##
 #A  trans37.grp                 GAP group library           Alexander Hulpke
 ##
-#A  @(#)$Id:$
-##
 #Y  Copyright (C) 2014, Derek Holt, University of Warwick
 #Y  Converted by Alexander Hulpke
 ##
 ##  This file contains part of the transitive groups of degree 37
 ##
-Revision.trans37_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[37]:=[];
 TRANSPROPERTIES[37]:=[];

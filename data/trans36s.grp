@@ -2,15 +2,11 @@
 ##
 #A  trans36s.grp                 GAP group library           Alexander Hulpke
 ##
-#A  @(#)$Id:$
-##
 #Y  Copyright (C) 2014, Derek Holt, University of Warwick
 #Y  Converted by Alexander Hulpke
 ##
 ##  This file contains part of the transitive groups of degree 36
 ##
-Revision.trans36s_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[36]{[90001..95000]}:=
 [[(1,32,3,31,2,33)(7,15,8,13,9,14)(10,22,12,24,11,23)(16,29)(17,30)(18,28)
