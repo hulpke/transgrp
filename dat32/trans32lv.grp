@@ -2,15 +2,11 @@
 ##
 #A  trans32lv.grp                 GAP group library           Alexander Hulpke
 ##
-#A  @(#)$Id:$
-##
 #Y  Copyright (C) 2008, John Cannon, U.Sydney and Derek Holt, U.Warwick
 #Y  Converted by Alexander Hulpke
 ##
 ##  This file contains part of the transitive groups of degree 32
 ##
-Revision.trans32lv_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[32]{[1665001..1670000]}:=
 [[(1,7,4,31,10,30,11,5,2,8,3,32,9,29,12,6)(13,20,23,28,22,26,16,18,14,19,24,
