@@ -151,6 +151,18 @@ them anew:
 `NrMovedPoints', `Size',   `Transitivity', and `IsPrimitive'.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Section{Interfacing with the library}
+
+Only access using the functions described in this manual is promised to
+remain stable. Code that wants to use the transitive groups library should
+use `TransitiveGroupsAvailable' to establish the data being installed for
+the desired degree. (This function has a dummy equivalent in the main {\GAP}
+library so that it is always available to return `false'.) Then
+`NrTransitiveGroups' should be used to determine the range of valid indices for
+the given degree. Routines should not try to access data structures of the
+libarry directly.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \Section{Supplemental Download}
 
 There are almost 3 million groups of degree 32 and these groups require over
