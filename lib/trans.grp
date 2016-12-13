@@ -232,7 +232,7 @@ fi;
 BIND_GLOBAL("TransGrpLoad",function(deg,nr)
 local Tbak,Fbak,flg,sel,i,fname,block,transdir;
   block:=300;
-  if deg=32 or deg=36 then block:=5000;fi;
+  if deg=32 or deg=36 or deg=40 then block:=5000;fi;
   if deg=32 then
     transdir:= DirectoriesPackageLibrary( "transgrp", "dat32" ); 
   else
@@ -248,7 +248,7 @@ local Tbak,Fbak,flg,sel,i,fname,block,transdir;
     BIND_GLOBAL("T",true);
     BIND_GLOBAL("F",false);
     fname:=Concatenation("trans",String(deg));
-    if deg>15 and not IsPrime(deg) then
+    if (deg>15 and not IsPrime(deg)) or deg>30  then
       if not IsBound(TRANSGRP[deg]) then
 	Read(Filename(transdir,Concatenation( fname, ".grp" ) ));
         if nr=0 then 
@@ -278,7 +278,7 @@ local Tbak,Fbak,flg,sel,i,fname,block,transdir;
 
     UnhideGlobalVariables("T","F");
 
-    if deg>15 and not IsPrime(deg) then
+    if (deg>15 and not IsPrime(deg)) or deg>30 then
       sel:=Difference(Filtered([1..Length(TRANSGRP[deg])],
 			 i->IsBound(TRANSGRP[deg][i])),TRANSSELECT[deg]);
     else
@@ -309,7 +309,7 @@ BIND_GLOBAL("TRANSGrp",function(deg,nr)
   if not IsBound(TRANSGRP[deg]) or not IsBound(TRANSGRP[deg][nr]) then
     TransGrpLoad(deg,nr);
   fi;
-  if deg>15 and not IsPrime(deg) then
+  if (deg>15 and not IsPrime(deg)) or deg>30 then
     AddSet(TRANSSELECT[deg],nr);
   fi;
   if nr>TRANSLENGTHS[deg] then
@@ -327,7 +327,7 @@ local l;
     not IsBound(TRANSPROPERTIES[deg][nr]) then
     TransGrpLoad(deg,nr);
   fi;
-  if deg>15 and not IsPrime(deg) then
+  if (deg>15 and not IsPrime(deg)) or deg>30 then
     AddSet(TRANSSELECT[deg],nr);
   fi;
   if nr>TRANSLENGTHS[deg] then
@@ -349,7 +349,7 @@ InstallGlobalFunction(NrTransitiveGroups, function(deg)
     return 0;
   fi;
   if not TransitiveGroupsAvailable(deg) then
-    return 0;
+    return fail;
   fi;
   return TRANSLENGTHS[deg];
 end);
@@ -383,10 +383,10 @@ InstallGlobalFunction( TransitiveGroup, function(deg,num)
     l:=TRANSGrp(deg,num);
     s:=Length(l);
     gens:=[];
-    for i in l{[1..s-1]} do
+    for i in l{[1..s]} do
       if IsPerm(i) then
         Add(gens,i);
-      else
+      elif not IsString(i) then
         if Length(i)=2 then
           Add(gens,TRANSGrp(i[1],i[2])[1]);
         else
@@ -395,7 +395,7 @@ InstallGlobalFunction( TransitiveGroup, function(deg,num)
       fi;
     od;
     g:= GroupByGenerators( gens, () );
-    if l[s]<>"" then
+    if IsString(l[s]) and l[s]<>"" then
       SetName(g,l[s]);
     else
       SetName(g,Concatenation("t",String(deg),"n",String(num)));
@@ -721,7 +721,7 @@ local i,j,a,b,l,p,deg,gut,g,grp,nr,f;
   a:=Position(arglis,Size);
   if a<>fail then
     a:=arglis[a+1];
-    for i in Filtered(deg,i->i>15 and not IsPrime(i)) do
+    for i in Filtered(deg,i->(i>15 and not IsPrime(i)) or i>30) do
       if IsFunction(a) then
         gut[i]:=Filtered(gut[i],j->a(TRANSSIZES[i][j]));
       elif IsList(a) then
