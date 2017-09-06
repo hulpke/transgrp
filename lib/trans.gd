@@ -77,6 +77,10 @@ DeclareGlobalVariable( "TRANSARRCACHE", "arrangements cache" );
 DeclareGlobalVariable( "TRANSSHAPEFREQS", "frequencies of shapes" );
 
 
+DeclareGlobalFunction("SelectTransitiveGroups");
+DeclareGlobalFunction("AllTransitiveGroups");
+DeclareGlobalFunction("OneTransitiveGroup");
+
 #############################################################################
 ##
 #E
