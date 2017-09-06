@@ -107,7 +107,7 @@ PackageWWWHome := "http://www.math.colostate.edu/~hulpke/transgrp",
 # in case of several help books give a list of such records here:
 PackageDoc := rec(
   # use same as in GAP            
-  BookName := "matgrp",
+  BookName := "transgrp",
   ArchiveURLSubset := [ "doc/manual.pdf"],
   PDFFile := "doc/manual.pdf",
   HTMLStart:="htm/chapters.htm",
