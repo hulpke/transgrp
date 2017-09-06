@@ -691,7 +691,7 @@ end);
 ##
 #F  SelectTransitiveGroups(arglis,alle)  . . . . . selection function
 ##
-BIND_GLOBAL("SelectTransitiveGroups",function(arglis,alle)
+InstallGlobalFunction(SelectTransitiveGroups,function(arglis,alle)
 local i,j,a,b,l,p,deg,gut,g,grp,nr,f;
   l:=Length(arglis)/2;
   if not IsInt(l) then
@@ -813,7 +813,7 @@ end);
 ##
 #F  AllTransitiveGroups( <fun>, <res>, ... ) . . . . . . . selection function
 ##
-BIND_GLOBAL("AllTransitiveGroups",function ( arg )
+InstallGlobalFunction(AllTransitiveGroups,function ( arg )
   return SelectTransitiveGroups(arg,true);
 end);
 
@@ -821,7 +821,7 @@ end);
 ##
 #F  OneTransitiveGroup( <fun>, <res>, ... ) . . . . . . . selection function
 ##
-BIND_GLOBAL("OneTransitiveGroup",function ( arg )
+InstallGlobalFunction(OneTransitiveGroup,function ( arg )
 local sel;
   sel:=SelectTransitiveGroups(arg,false);
   if sel=[] then
