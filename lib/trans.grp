@@ -214,19 +214,20 @@ InstallFlushableValue(TRANSSHAPEFREQS,[]);
 
 if not IsBound(TRANSAVAILABLE) or Length(TRANSAVAILABLE)=0 then
   TRANSAVAILABLE:=BlistList([1..50],[2..7]);
-  HideGlobalVariables("dir","fnam","tradeg");
-  for tradeg in [8..48] do
-    if tradeg=32 then
-      dir:= DirectoriesPackageLibrary( "transgrp", "dat32" ); 
-    else
-      dir:= DirectoriesPackageLibrary( "transgrp", "data" ); 
-    fi;
-    fnam:=Filename( dir, Concatenation("trans",String(tradeg),".grp"));
-    if fnam<>fail and IsReadableFile(fnam) then
-      TRANSAVAILABLE[tradeg]:=true;
-    fi;
-  od;
-  UnhideGlobalVariables("dir","fnam","tradeg");
+  CallFuncList(function()
+    local dir,fnam,tradeg;
+    for tradeg in [8..48] do
+      if tradeg=32 then
+        dir:= DirectoriesPackageLibrary( "transgrp", "dat32" ); 
+      else
+        dir:= DirectoriesPackageLibrary( "transgrp", "data" ); 
+      fi;
+      fnam:=Filename( dir, Concatenation("trans",String(tradeg),".grp"));
+      if fnam<>fail and IsReadableFile(fnam) then
+        TRANSAVAILABLE[tradeg]:=true;
+      fi;
+    od;
+  end,[]);
 fi;
 
 BIND_GLOBAL("TransGrpLoad",function(deg,nr)
@@ -244,15 +245,11 @@ local Tbak,Fbak,flg,sel,i,fname,block,transdir;
   if not IsBound(TRANSAVAILABLE[deg]) or TRANSAVAILABLE[deg]=false then
     Error("transitive groups of degree ",deg," are unavailable");
   else
-    HideGlobalVariables("T","F");
-    BIND_GLOBAL("T",true);
-    BIND_GLOBAL("F",false);
     fname:=Concatenation("trans",String(deg));
     if (deg>15 and not IsPrime(deg)) or deg>30  then
       if not IsBound(TRANSGRP[deg]) then
 	Read(Filename(transdir,Concatenation( fname, ".grp" ) ));
         if nr=0 then 
-	  UnhideGlobalVariables("T","F");
 	  return;
 	fi;
       else
@@ -275,8 +272,6 @@ local Tbak,Fbak,flg,sel,i,fname,block,transdir;
     IsString(fname);
 
     Read(Filename(transdir,Concatenation( fname, ".grp" ) ));
-
-    UnhideGlobalVariables("T","F");
 
     if (deg>15 and not IsPrime(deg)) or deg>30 then
       sel:=Difference(Filtered([1..Length(TRANSGRP[deg])],
