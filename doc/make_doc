@@ -27,7 +27,7 @@ pdftex manual; pdftex manual
 # The HTML version of the manual
 mkdir -p ../htm
 echo "Creating HTML documentation"
-~/gap4/etc/convert.pl -t -c -n grape . ../htm
+../../../etc/convert.pl -t -c -n transgrp . ../htm
 
 #############################################################################
 ##
