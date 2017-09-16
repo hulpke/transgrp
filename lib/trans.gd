@@ -79,6 +79,7 @@ DeclareGlobalVariable( "TRANSSHAPEFREQS", "frequencies of shapes" );
 
 DeclareGlobalFunction("SelectTransitiveGroups");
 DeclareGlobalFunction("AllTransitiveGroups");
+DeclareGlobalFunction("AllLibraryTransitiveGroups");
 DeclareGlobalFunction("OneTransitiveGroup");
 
 #############################################################################

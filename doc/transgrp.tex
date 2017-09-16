@@ -96,6 +96,7 @@ gap> TransitiveIdentification(Group((1,2),(1,2,3)));
 \Section{Selection Functions}
 
 \>AllTransitiveGroups( <fun1>, <val1>, ... ) F
+\>AllLibraryTransitiveGroups( <fun1>, <val1>, ... ) F
 \>OneTransitiveGroup( <fun1>, <val1>, ... ) F
 
 These functions take an arbitrary number of pairs (but at least one pair)
@@ -149,6 +150,9 @@ obtain the following properties from the database without having to compute
 them anew:
 
 `NrMovedPoints', `Size',   `Transitivity', and `IsPrimitive'.
+
+The function `AllLibraryTransitiveGroups' works the same way as
+`AllTransitiveGroups' but does not warn if no degree is specified.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \Section{Interfacing with the library}

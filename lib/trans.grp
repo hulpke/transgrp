@@ -684,9 +684,9 @@ end);
 
 #############################################################################
 ##
-#F  SelectTransitiveGroups(arglis,alle)  . . . . . selection function
+#F  SelectTransitiveGroups(arglis,alle,whine)  . . . . . selection function
 ##
-InstallGlobalFunction(SelectTransitiveGroups,function(arglis,alle)
+InstallGlobalFunction(SelectTransitiveGroups,function(arglis,alle,whine)
 local i,j,a,b,l,p,deg,gut,g,grp,nr,f;
   l:=Length(arglis)/2;
   if not IsInt(l) then
@@ -782,7 +782,8 @@ local i,j,a,b,l,p,deg,gut,g,grp,nr,f;
     fi;
   od;
 
-  if f then
+  if f and whine then
+    IsRange(deg); # display nicer
     Info(InfoWarning,1,"AllTransitiveGroups: Degree restricted to ",deg);
   fi;
 
@@ -807,9 +808,13 @@ end);
 #############################################################################
 ##
 #F  AllTransitiveGroups( <fun>, <res>, ... ) . . . . . . . selection function
+#F  AllLibraryTransitiveGroups( <fun>, <res>, ... )  . . . selection function
 ##
 InstallGlobalFunction(AllTransitiveGroups,function ( arg )
-  return SelectTransitiveGroups(arg,true);
+  return SelectTransitiveGroups(arg,true,true);
+end);
+InstallGlobalFunction(AllLibraryTransitiveGroups,function ( arg )
+  return SelectTransitiveGroups(arg,true,false);
 end);
 
 #############################################################################
@@ -818,7 +823,7 @@ end);
 ##
 InstallGlobalFunction(OneTransitiveGroup,function ( arg )
 local sel;
-  sel:=SelectTransitiveGroups(arg,false);
+  sel:=SelectTransitiveGroups(arg,false,true);
   if sel=[] then
     return fail;
   else
