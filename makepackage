@@ -1,0 +1,1 @@
+#tar zcf trans32.tgz --exclude dat32/OLD dat32
