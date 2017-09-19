@@ -210,7 +210,6 @@ TRANSNONDISCRIM := [[],[],[],[],[],[],[],[],[],[],[],[[273,292]],[],
 TRANSSELECT :=[];
 TRANSSIZES  :=[];
 TRANSPARTNUM:=[];
-InstallFlushableValue(TRANSSHAPEFREQS,[]);
 
 if not IsBound(TRANSAVAILABLE) or Length(TRANSAVAILABLE)=0 then
   TRANSAVAILABLE:=BlistList([1..50],[2..7]);
@@ -289,7 +288,6 @@ local Tbak,Fbak,flg,sel,i,fname,block,transdir;
     MakeImmutable(TRANSPROPERTIES[deg][i]);
   od;
   TRANSPARTNUM[deg]:=NrPartitions(deg);
-  TRANSSHAPEFREQS[deg]:=[];
 end);
 
 InstallGlobalFunction(TransitiveGroupsAvailable,function(deg)
