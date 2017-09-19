@@ -170,12 +170,16 @@ libarry directly.
 \Section{Supplemental Download}
 
 There are almost 3 million groups of degree 32 and these groups require over
-a GB of disk space. These groups are therefore not part of the package
-distribution, but are made available as a supplemental download.
+a GB of disk space when uncompressed.
+These groups are therefore not part of the package
+distribution, but are made available as a supplemental download at 
+\begintt
+http://www.math.colostate.edu/~hulpke/transgrp/trans32.tgz
+\endtt
 
-
-
-Simply unpack this archive in the folder of the `transgrp' package (this
+Simply unpack this archive (which is a tar archive compressed with gzip --
+consult your computer administrator on the correct way of unpacking)
+in the folder of the `transgrp' package (this
 folder will contain the `PackageInfo.g' file, it will create a folder dat32
 containing the groups of degree 32. Once you restart GAP it will
 automatically recognize the existence of these groups.

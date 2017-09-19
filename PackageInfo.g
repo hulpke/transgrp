@@ -11,7 +11,7 @@ Subtitle := "Transitive Groups Library",
 Version := "2.0",
 
 ##  Release date of the current version in dd/mm/yyyy format.
-Date := "30/06/2016",
+Date := "01/10/2017",
 
 ##  URL of the archive(s) of the current package release, but *without*
 ##  the format extension(s), like '.zoo', which are given next.
@@ -82,7 +82,7 @@ PackageInfoURL := "http://www.math.colostate.edu/~hulpke/transgrp/PackageInfo.g"
 ##  Please, use '<span class="pkgname">GAP</span>' and
 ##  '<span class="pkgname">MyPKG</span>' for specifing package names.
 ##  
-AbstractHTML := "The <span class=\"transgrp\">matgrp</span> package provides \
+AbstractHTML := "The <span class=\"transgrp\">transgrp</span> package provides \
 the library of transitive groups.",
 
 PackageWWWHome := "http://www.math.colostate.edu/~hulpke/transgrp",
