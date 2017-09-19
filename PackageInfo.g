@@ -11,7 +11,7 @@ Subtitle := "Transitive Groups Library",
 Version := "2.0",
 
 ##  Release date of the current version in dd/mm/yyyy format.
-Date := "01/10/2017",
+Date := "19/09/2017",
 
 ##  URL of the archive(s) of the current package release, but *without*
 ##  the format extension(s), like '.zoo', which are given next.
