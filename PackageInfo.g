@@ -1,9 +1,9 @@
-# PackageInfo for transgrp
+# PackageInfo for the TransGrp package
 
 SetPackageInfo( rec(
 
 ##  This is case sensitive, use your preferred spelling.
-PackageName := "transgrp",
+PackageName := "TransGrp",
 Subtitle := "Transitive Groups Library",
 
 ##  See '?Extending: Version Numbers' in GAP help for an explanation
@@ -82,7 +82,7 @@ PackageInfoURL := "http://www.math.colostate.edu/~hulpke/transgrp/PackageInfo.g"
 ##  Please, use '<span class="pkgname">GAP</span>' and
 ##  '<span class="pkgname">MyPKG</span>' for specifing package names.
 ##  
-AbstractHTML := "The <span class=\"transgrp\">transgrp</span> package provides \
+AbstractHTML := "The <span class=\"transgrp\">TransGrp</span> package provides \
 the library of transitive groups.",
 
 PackageWWWHome := "http://www.math.colostate.edu/~hulpke/transgrp",
