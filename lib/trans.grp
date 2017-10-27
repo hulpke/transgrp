@@ -224,23 +224,25 @@ if IsBound(HPCGAP) then
   od;
 fi;
 
-if not IsBound(TRANSAVAILABLE) or Length(TRANSAVAILABLE)=0 then
-  TRANSAVAILABLE:=BlistList([1..50],[2..7]);
-  CallFuncList(function()
-    local dir,fnam,tradeg;
-    for tradeg in [8..48] do
-      if tradeg=32 then
-        dir:= DirectoriesPackageLibrary( "transgrp", "dat32" ); 
-      else
-        dir:= DirectoriesPackageLibrary( "transgrp", "data" ); 
-      fi;
-      fnam:=Filename( dir, Concatenation("trans",String(tradeg),".grp"));
-      if fnam<>fail and IsReadableFile(fnam) then
-        TRANSAVAILABLE[tradeg]:=true;
-      fi;
-    od;
-  end,[]);
-fi;
+atomic TRANSREGION do
+  if not IsBound(TRANSAVAILABLE) or Length(TRANSAVAILABLE)=0 then
+    TRANSAVAILABLE:=BlistList([1..50],[2..7]);
+    CallFuncList(function()
+      local dir,fnam,tradeg;
+      for tradeg in [8..48] do
+	if tradeg=32 then
+	  dir:= DirectoriesPackageLibrary( "transgrp", "dat32" ); 
+	else
+	  dir:= DirectoriesPackageLibrary( "transgrp", "data" ); 
+	fi;
+	fnam:=Filename( dir, Concatenation("trans",String(tradeg),".grp"));
+	if fnam<>fail and IsReadableFile(fnam) then
+	  TRANSAVAILABLE[tradeg]:=true;
+	fi;
+      od;
+    end,[]);
+  fi;
+od;
 
 BIND_GLOBAL("TransGrpLoad",function(deg,nr)
 local Tbak,Fbak,flg,sel,i,fname,block,transdir;
@@ -251,119 +253,132 @@ local Tbak,Fbak,flg,sel,i,fname,block,transdir;
   else
     transdir:= DirectoriesPackageLibrary( "transgrp", "data" ); 
   fi;
-  if IsBound(TRANSGRP[deg]) and (nr=0 or IsBound(TRANSGRP[deg][nr])) then
-    return;
-  fi;
-  if not IsBound(TRANSAVAILABLE[deg]) or TRANSAVAILABLE[deg]=false then
-    Error("transitive groups of degree ",deg," are unavailable");
-  else
-    fname:=Concatenation("trans",String(deg));
-    if (deg>15 and not IsPrime(deg)) or deg>30  then
-      if not IsBound(TRANSGRP[deg]) then
-	Read(Filename(transdir,Concatenation( fname, ".grp" ) ));
-	if IsBound(HPCGAP) then
-	  MigrateObj(TRANSGRP[deg], TRANSREGION);
-	  MigrateObj(TRANSPROPERTIES[deg], TRANSREGION);
-	  MigrateObj(TRANSSIZES[deg], TRANSREGION);
-	  MigrateObj(TRANSSELECT[deg], TRANSREGION);
-	fi;
-        if nr=0 then 
-	  return;
-	fi;
-      else
-	# the groups to be thrown away
-	sel:=Difference(Filtered([1..Length(TRANSGRP[deg])],
-	                  i->IsBound(TRANSGRP[deg])),TRANSSELECT[deg]);
-	if Length(TRANSSELECT[deg])>block then
-	  flg:=TRANSSELECT[deg]{[1..Length(TRANSSELECT[deg])-block/2]};
-	  sel:=Union(flg,sel);
-	  TRANSSELECT[deg]:=Difference(TRANSSELECT[deg],flg);
+  atomic readonly TRANSREGION do
+    if IsBound(TRANSGRP[deg]) and (nr=0 or IsBound(TRANSGRP[deg][nr])) then
+      return;
+    fi;
+  od;
+  atomic TRANSREGION do
+    if not IsBound(TRANSAVAILABLE[deg]) or TRANSAVAILABLE[deg]=false then
+      Error("transitive groups of degree ",deg," are unavailable");
+    else
+      fname:=Concatenation("trans",String(deg));
+      if (deg>15 and not IsPrime(deg)) or deg>30  then
+	if not IsBound(TRANSGRP[deg]) then
+	  Read(Filename(transdir,Concatenation( fname, ".grp" ) ));
 	  if IsBound(HPCGAP) then
+	    MigrateObj(TRANSGRP[deg], TRANSREGION);
+	    MigrateObj(TRANSPROPERTIES[deg], TRANSREGION);
+	    MigrateObj(TRANSSIZES[deg], TRANSREGION);
 	    MigrateObj(TRANSSELECT[deg], TRANSREGION);
 	  fi;
+	  if nr=0 then 
+	    return;
+	  fi;
+	else
+	  # the groups to be thrown away
+	  sel:=Difference(Filtered([1..Length(TRANSGRP[deg])],
+			    i->IsBound(TRANSGRP[deg])),TRANSSELECT[deg]);
+	  if Length(TRANSSELECT[deg])>block then
+	    flg:=TRANSSELECT[deg]{[1..Length(TRANSSELECT[deg])-block/2]};
+	    sel:=Union(flg,sel);
+	    TRANSSELECT[deg]:=Difference(TRANSSELECT[deg],flg);
+	    if IsBound(HPCGAP) then
+	      MigrateObj(TRANSSELECT[deg], TRANSREGION);
+	    fi;
+	  fi;
+	  for i in sel do
+	    Unbind(TRANSGRP[deg][i]);
+	    Unbind(TRANSPROPERTIES[deg][i]);
+	  od;
 	fi;
-        for i in sel do
-	  Unbind(TRANSGRP[deg][i]);
-	  Unbind(TRANSPROPERTIES[deg][i]);
-	od;
+	Append(fname,WordAlp("abcdefghijklmnopqrstuvwxyz",Int((nr-1)/block)+1));
       fi;
-      Append(fname,WordAlp("abcdefghijklmnopqrstuvwxyz",Int((nr-1)/block)+1));
-    fi;
 
-    IsString(fname);
+      IsString(fname);
 
-    Read(Filename(transdir,Concatenation( fname, ".grp" ) ));
-    if IsBound(HPCGAP) then
-      MigrateObj(TRANSGRP[deg], TRANSREGION);
-      MigrateObj(TRANSPROPERTIES[deg], TRANSREGION);
-    fi;
+      Read(Filename(transdir,Concatenation( fname, ".grp" ) ));
+      if IsBound(HPCGAP) then
+	MigrateObj(TRANSGRP[deg], TRANSREGION);
+	MigrateObj(TRANSPROPERTIES[deg], TRANSREGION);
+      fi;
 
-    if (deg>15 and not IsPrime(deg)) or deg>30 then
-      sel:=Difference(Filtered([1..Length(TRANSGRP[deg])],
-			 i->IsBound(TRANSGRP[deg][i])),TRANSSELECT[deg]);
-    else
-      TRANSLENGTHS[deg]:=Length(TRANSGRP[deg]);
-      TRANSSIZES[deg]:=List(TRANSPROPERTIES[deg],i->i[1]);
-      sel:=[1..TRANSLENGTHS[deg]];
+      if (deg>15 and not IsPrime(deg)) or deg>30 then
+	sel:=Difference(Filtered([1..Length(TRANSGRP[deg])],
+			  i->IsBound(TRANSGRP[deg][i])),TRANSSELECT[deg]);
+      else
+	TRANSLENGTHS[deg]:=Length(TRANSGRP[deg]);
+	TRANSSIZES[deg]:=List(TRANSPROPERTIES[deg],i->i[1]);
+	sel:=[1..TRANSLENGTHS[deg]];
+      fi;
+      # make blists those which are
+      ForAll(TRANSPROPERTIES[deg]{sel},i->IsBound(i[5]) and IsBlist(i[5]));
     fi;
-    # make blists those which are
-    ForAll(TRANSPROPERTIES[deg]{sel},i->IsBound(i[5]) and IsBlist(i[5]));
-  fi;
-  for i in sel do
-    MakeImmutable(TRANSGRP[deg][i]);
-    MakeImmutable(TRANSPROPERTIES[deg][i]);
+    for i in sel do
+      MakeImmutable(TRANSGRP[deg][i]);
+      MakeImmutable(TRANSPROPERTIES[deg][i]);
+    od;
+    TRANSPARTNUM[deg]:=NrPartitions(deg);
   od;
-  TRANSPARTNUM[deg]:=NrPartitions(deg);
 end);
 
 InstallGlobalFunction(TransitiveGroupsAvailable,function(deg)
-  if not IsPosInt(deg) then
-    Error("degree must be a positive integer");
-  fi;
-  if not IsBound(TRANSAVAILABLE[deg]) or TRANSAVAILABLE[deg]=false then
-    return false;
-  fi;
-  TransGrpLoad(deg,0); # to set up variables
-  return true;
+  atomic TRANSREGION do
+    if not IsPosInt(deg) then
+      Error("degree must be a positive integer");
+    fi;
+    if not IsBound(TRANSAVAILABLE[deg]) or TRANSAVAILABLE[deg]=false then
+      return false;
+    fi;
+    TransGrpLoad(deg,0); # to set up variables
+    return true;
+  od;
 end);
 
 BIND_GLOBAL("TRANSGrp",function(deg,nr)
-  if not IsBound(TRANSGRP[deg]) or not IsBound(TRANSGRP[deg][nr]) then
-    TransGrpLoad(deg,nr);
+  if not TransitiveGroupsAvailable(deg) then 
+    Error("Transitive Groups of degree ",deg," are not available");
   fi;
-  if (deg>15 and not IsPrime(deg)) or deg>30 then
-    AddSet(TRANSSELECT[deg],nr);
-  fi;
-  if nr>TRANSLENGTHS[deg] then
-    return "fail";
-  fi;
-  return TRANSGRP[deg][nr];
-end);
+  atomic TRANSREGION do
+    if not IsBound(TRANSGRP[deg]) or not IsBound(TRANSGRP[deg][nr]) then
+      TransGrpLoad(deg,nr);
+    fi;
+    if (deg>15 and not IsPrime(deg)) or deg>30 then
+      AddSet(TRANSSELECT[deg],nr);
+    fi;
+    if nr>TRANSLENGTHS[deg] then
+      return "fail";
+    fi;
+    return TRANSGRP[deg][nr];
+  od;
+  end);
 
 BIND_GLOBAL("TRANSProperties",function(deg,nr)
 local l;
   if not TransitiveGroupsAvailable(deg) then 
     Error("Transitive Groups of degree ",deg," are not available");
   fi;
-  if not IsBound(TRANSPROPERTIES[deg]) or
-    not IsBound(TRANSPROPERTIES[deg][nr]) then
-    TransGrpLoad(deg,nr);
-  fi;
-  if (deg>15 and not IsPrime(deg)) or deg>30 then
-    AddSet(TRANSSELECT[deg],nr);
-  fi;
-  if nr>TRANSLENGTHS[deg] then
-    return "fail";
-  fi;
-  l:=TRANSPROPERTIES[deg][nr];
-  if IsBound(l[5]) and IsString(l[5]) then
-    # translate string to blist
-    l:=ShallowCopy(l);
-    l[5]:=BlistStringDecode(l[5],TRANSPARTNUM[deg]-1);
-    MakeImmutable(l);
-    TRANSPROPERTIES[deg][nr]:=l;
-  fi;
-  return l;
+  atomic TRANSREGION do
+    if not IsBound(TRANSPROPERTIES[deg]) or
+      not IsBound(TRANSPROPERTIES[deg][nr]) then
+      TransGrpLoad(deg,nr);
+    fi;
+    if (deg>15 and not IsPrime(deg)) or deg>30 then
+      AddSet(TRANSSELECT[deg],nr);
+    fi;
+    if nr>TRANSLENGTHS[deg] then
+      return "fail";
+    fi;
+    l:=TRANSPROPERTIES[deg][nr];
+    if IsBound(l[5]) and IsString(l[5]) then
+      # translate string to blist
+      l:=ShallowCopy(l);
+      l[5]:=BlistStringDecode(l[5],TRANSPARTNUM[deg]-1);
+      MakeImmutable(l);
+      TRANSPROPERTIES[deg][nr]:=l;
+    fi;
+    return l;
+  od;
 end);
 
 InstallGlobalFunction(NrTransitiveGroups, function(deg)
@@ -394,44 +409,45 @@ InstallGlobalFunction( TransitiveGroup, function(deg,num)
       Error("maximal number of groups of degree ",deg," is ",
 	    TRANSLENGTHS[deg]);
     fi;
-  od;
- 
-  # special case: Symmetric and Alternating Group
-  s:=Factorial(deg);
-  if TRANSProperties(deg,num)[1]=s then
-    if deg=1 then
-      g:=GroupByGenerators( [], () );
-    else
-      g:=SymmetricGroup(deg);
-    fi;
-    SetName(g,Concatenation("S",String(deg)));
-  elif TRANSProperties(deg,num)[1]*2=s then
-    g:=AlternatingGroup(deg);
-    SetName(g,Concatenation("A",String(deg)));
-  else
-    l:=TRANSGrp(deg,num);
-    s:=Length(l);
-    gens:=[];
-    for i in l{[1..s]} do
-      if IsPerm(i) then
-        Add(gens,i);
-      elif not IsString(i) then
-        if Length(i)=2 then
-          Add(gens,TRANSGrp(i[1],i[2])[1]);
-        else
-          Add(gens,TRANSGrp(i[1],i[2])[i[3]]);
-        fi;
+  
+    # special case: Symmetric and Alternating Group
+    s:=Factorial(deg);
+    if TRANSProperties(deg,num)[1]=s then
+      if deg=1 then
+	g:=GroupByGenerators( [], () );
+      else
+	g:=SymmetricGroup(deg);
       fi;
-    od;
-    g:= GroupByGenerators( gens, () );
-    if IsString(l[s]) and l[s]<>"" then
-      SetName(g,l[s]);
+      SetName(g,Concatenation("S",String(deg)));
+    elif TRANSProperties(deg,num)[1]*2=s then
+      g:=AlternatingGroup(deg);
+      SetName(g,Concatenation("A",String(deg)));
     else
-      SetName(g,Concatenation("t",String(deg),"n",String(num)));
+      l:=TRANSGrp(deg,num);
+      s:=Length(l);
+      gens:=[];
+      for i in l{[1..s]} do
+	if IsPerm(i) then
+	  Add(gens,i);
+	elif not IsString(i) then
+	  if Length(i)=2 then
+	    Add(gens,TRANSGrp(i[1],i[2])[1]);
+	  else
+	    Add(gens,TRANSGrp(i[1],i[2])[i[3]]);
+	  fi;
+	fi;
+      od;
+      g:= GroupByGenerators( gens, () );
+      if IsString(l[s]) and l[s]<>"" then
+	SetName(g,l[s]);
+      else
+	SetName(g,Concatenation("t",String(deg),"n",String(num)));
+      fi;
     fi;
-  fi;
-  SetTransitiveIdentification(g,num);
-  return g;
+    SetTransitiveIdentification(g,num);
+    return g;
+
+  od;
 end );
 
 InstallFlushableValue(TRANSCOMBCACHE,[[0],[0],[0]]);
@@ -441,19 +457,23 @@ fi;
 
 BindGlobal("TransCombinat",function(m,n)
 local i,l;
-  for i in [1..3] do
-    if TRANSCOMBCACHE[i][1]=m and TRANSCOMBCACHE[i][2]=n then
-      return TRANSCOMBCACHE[i][3];
-    fi;
+  atomic readonly TRANSREGION do
+    for i in [1..3] do
+      if TRANSCOMBCACHE[i][1]=m and TRANSCOMBCACHE[i][2]=n then
+	return TRANSCOMBCACHE[i][3];
+      fi;
+    od;
   od;
-  TRANSCOMBCACHE[3]:=TRANSCOMBCACHE[2];
-  TRANSCOMBCACHE[2]:=TRANSCOMBCACHE[1];
-  l:=Combinations(m,n);
-  for i in l do MakeImmutable(i);od;
-  Sort(l);
-  IsSet(l);
-  TRANSCOMBCACHE[1]:=[m,n,l];
-  return l;
+  atomic TRANSREGION do
+    TRANSCOMBCACHE[3]:=TRANSCOMBCACHE[2];
+    TRANSCOMBCACHE[2]:=TRANSCOMBCACHE[1];
+    l:=Combinations(m,n);
+    for i in l do MakeImmutable(i);od;
+    Sort(l);
+    IsSet(l);
+    TRANSCOMBCACHE[1]:=[m,n,l];
+    return l;
+  od;
 end);
 
 InstallFlushableValue(TRANSARRCACHE,[[0],[0],[0]]);
@@ -463,19 +483,23 @@ fi;
 
 BindGlobal("TransArrange",function(m,n)
 local i,l;
-  for i in [1..3] do
-    if TRANSARRCACHE[i][1]=m and TRANSARRCACHE[i][2]=n then
-      return TRANSARRCACHE[i][3];
-    fi;
+  atomic readonly TRANSREGION do
+    for i in [1..3] do
+      if TRANSARRCACHE[i][1]=m and TRANSARRCACHE[i][2]=n then
+	return TRANSARRCACHE[i][3];
+      fi;
+    od;
   od;
-  TRANSARRCACHE[3]:=TRANSARRCACHE[2];
-  TRANSARRCACHE[2]:=TRANSARRCACHE[1];
-  l:=Arrangements(m,n);
-  for i in l do MakeImmutable(i);od;
-  Sort(l);
-  IsSet(l);
-  TRANSARRCACHE[1]:=[m,n,l];
-  return l;
+  atomic TRANSREGION do
+    TRANSARRCACHE[3]:=TRANSARRCACHE[2];
+    TRANSARRCACHE[2]:=TRANSARRCACHE[1];
+    l:=Arrangements(m,n);
+    for i in l do MakeImmutable(i);od;
+    Sort(l);
+    IsSet(l);
+    TRANSARRCACHE[1]:=[m,n,l];
+    return l;
+  od;
 end);
 
 BindGlobal("CntOp",function(grp,orb,op)
@@ -538,60 +562,62 @@ local dom,p,s,t,a,cand,i,grp,deg,aiso,piso,co,cheap;
     Error("Group must operate transitively");
   fi;
   deg:=Length(dom);
-  if not IsBound(TRANSLENGTHS[deg]) then
-    TransGrpLoad(deg,0);
-  fi;
+  atomic TRANSREGION do
+    if not IsBound(TRANSLENGTHS[deg]) then
+      TransGrpLoad(deg,0);
+    fi;
 
-  s:=Size(grp);
-  if deg>15 then
-    cand:=Filtered([1..TRANSLENGTHS[deg]],i->TRANSSIZES[deg][i]=s);
-  else
-    cand:=Filtered([1..TRANSLENGTHS[deg]],i->TRANSProperties(deg,i)[1]=s);
-  fi;
-  if Length(cand)>1 and deg>4 then
-    co:=CntOp(grp,OrbitsDomain(grp,TransCombinat(dom,2),OnSets),OnSets);
-    cand:=Filtered(cand,i->TRANSProperties(deg,i)[6]=co);
-    if Length(cand)>1 then
-      co:=CntOp(grp,OrbitsDomain(grp,TransArrange(dom,2),OnTuples),OnTuples);
-      cand:=Filtered(cand,i->TRANSProperties(deg,i)[7]=co);
+    s:=Size(grp);
+    if deg>15 then
+      cand:=Filtered([1..TRANSLENGTHS[deg]],i->TRANSSIZES[deg][i]=s);
+    else
+      cand:=Filtered([1..TRANSLENGTHS[deg]],i->TRANSProperties(deg,i)[1]=s);
+    fi;
+    if Length(cand)>1 and deg>4 then
+      co:=CntOp(grp,OrbitsDomain(grp,TransCombinat(dom,2),OnSets),OnSets);
+      cand:=Filtered(cand,i->TRANSProperties(deg,i)[6]=co);
+      if Length(cand)>1 then
+	co:=CntOp(grp,OrbitsDomain(grp,TransArrange(dom,2),OnTuples),OnTuples);
+	cand:=Filtered(cand,i->TRANSProperties(deg,i)[7]=co);
+      fi;
+      if Length(cand)>1 then
+	co:=CntOp(grp,OrbitsDomain(grp,TransCombinat(dom,3),OnSets),OnSets);
+	cand:=Filtered(cand,i->TRANSProperties(deg,i)[8]=co);
+      fi;
+    fi;
+
+    Pcgs(grp); # try to enforce solvable calculations further on.
+  #  if Length(cand)>1 and IsSolvableGroup(grp)
+  #     and not HasConjugacyClasses(grp) then
+  #    t:=[];
+  #    aiso:=IsomorphismPcGroup(grp);
+  #    a:=Image(aiso,grp);
+  #    for i in ConjugacyClasses(a) do
+  #      s:=ConjugacyClass(grp,PreImagesRepresentative(aiso,Representative(i)));
+  #      SetStabilizerOfExternalSet(s,PreImage(aiso,Centralizer(i)));
+  #      Add(t,s);
+  #    od;
+  #    SetConjugacyClasses(grp,t);
+  #  fi;
+
+    if Length(cand)>1 and cheap<>2 then
+      s:=List(CycleStructuresGroup(grp),i->i=1);
+      cand:=Filtered(cand,i->TRANSProperties(deg,i)[5]=s);
     fi;
     if Length(cand)>1 then
-      co:=CntOp(grp,OrbitsDomain(grp,TransCombinat(dom,3),OnSets),OnSets);
-      cand:=Filtered(cand,i->TRANSProperties(deg,i)[8]=co);
+      p:=List(cand,i->TransitiveGroup(deg,i));
+
+      # DerivedSubgroups + Frattini Subgroups
+      s:=Filtered([1..Length(cand)],i->
+	  Size(DerivedSubgroup(p[i]))=Size(DerivedSubgroup(grp)));
+      if Length(Factors(Size(grp)))=1 then
+	s:=Filtered(s,i->
+	    Size(FrattiniSubgroup(p[i]))=Size(FrattiniSubgroup(grp)));
+      fi;
+      cand:=cand{s};
+      p:=p{s};
     fi;
-  fi;
-
-  Pcgs(grp); # try to enforce solvable calculations further on.
-#  if Length(cand)>1 and IsSolvableGroup(grp)
-#     and not HasConjugacyClasses(grp) then
-#    t:=[];
-#    aiso:=IsomorphismPcGroup(grp);
-#    a:=Image(aiso,grp);
-#    for i in ConjugacyClasses(a) do
-#      s:=ConjugacyClass(grp,PreImagesRepresentative(aiso,Representative(i)));
-#      SetStabilizerOfExternalSet(s,PreImage(aiso,Centralizer(i)));
-#      Add(t,s);
-#    od;
-#    SetConjugacyClasses(grp,t);
-#  fi;
-
-  if Length(cand)>1 and cheap<>2 then
-    s:=List(CycleStructuresGroup(grp),i->i=1);
-    cand:=Filtered(cand,i->TRANSProperties(deg,i)[5]=s);
-  fi;
-  if Length(cand)>1 then
-    p:=List(cand,i->TransitiveGroup(deg,i));
-
-    # DerivedSubgroups + Frattini Subgroups
-    s:=Filtered([1..Length(cand)],i->
-	Size(DerivedSubgroup(p[i]))=Size(DerivedSubgroup(grp)));
-    if Length(Factors(Size(grp)))=1 then
-      s:=Filtered(s,i->
-	  Size(FrattiniSubgroup(p[i]))=Size(FrattiniSubgroup(grp)));
-    fi;
-    cand:=cand{s};
-    p:=p{s};
-  fi;
+  od;
 
   if Length(cand)>1 then
     # Blockl"angen
@@ -728,94 +754,96 @@ local i,j,a,b,l,p,deg,gut,g,grp,nr,f;
   if not IsInt(l) then
     Error("wrong arguments");
   fi;
-  deg:=Filtered([1..Length(TRANSAVAILABLE)],x->IsBound(TRANSAVAILABLE[x])
-    and TRANSAVAILABLE[x]=true);
-  p:=Position(arglis,NrMovedPoints);
-  if p<>fail then
-    p:=arglis[p+1];
-    if IsInt(p) then
-      p:=[p];
-    fi;
-    if IsList(p) then
-      f:=not IsSubset(deg,p);
-      deg:=Intersection(deg,p);
-    else
-      f:=true;
-      deg:=Filtered(deg,p); 
-    fi;
-  else
-    f:=true; #warnung weil kein Degree angegeben ?
-  fi;
-  gut:=[];
-  for i in deg do
-    if not IsBound(TRANSLENGTHS[i]) then
-      TransGrpLoad(i,0);
-    fi;
-    gut[i]:=[1..TRANSLENGTHS[i]];
-  od;
-
-  # special treatment for Size for degrees larger than 15
-  a:=Position(arglis,Size);
-  if a<>fail then
-    a:=arglis[a+1];
-    for i in Filtered(deg,i->(i>15 and not IsPrime(i)) or i>30) do
-      if IsFunction(a) then
-        gut[i]:=Filtered(gut[i],j->a(TRANSSIZES[i][j]));
-      elif IsList(a) then
-        gut[i]:=Filtered(gut[i],j->TRANSSIZES[i][j] in a);
+  atomic TRANSREGION do
+    deg:=Filtered([1..Length(TRANSAVAILABLE)],x->IsBound(TRANSAVAILABLE[x])
+      and TRANSAVAILABLE[x]=true);
+    p:=Position(arglis,NrMovedPoints);
+    if p<>fail then
+      p:=arglis[p+1];
+      if IsInt(p) then
+	p:=[p];
+      fi;
+      if IsList(p) then
+	f:=not IsSubset(deg,p);
+	deg:=Intersection(deg,p);
       else
-        gut[i]:=Filtered(gut[i],j->TRANSSIZES[i][j]=a);
+	f:=true;
+	deg:=Filtered(deg,p); 
+      fi;
+    else
+      f:=true; #warnung weil kein Degree angegeben ?
+    fi;
+    gut:=[];
+    for i in deg do
+      if not IsBound(TRANSLENGTHS[i]) then
+	TransGrpLoad(i,0);
+      fi;
+      gut[i]:=[1..TRANSLENGTHS[i]];
+    od;
+
+    # special treatment for Size for degrees larger than 15
+    a:=Position(arglis,Size);
+    if a<>fail then
+      a:=arglis[a+1];
+      for i in Filtered(deg,i->(i>15 and not IsPrime(i)) or i>30) do
+	if IsFunction(a) then
+	  gut[i]:=Filtered(gut[i],j->a(TRANSSIZES[i][j]));
+	elif IsList(a) then
+	  gut[i]:=Filtered(gut[i],j->TRANSSIZES[i][j] in a);
+	else
+	  gut[i]:=Filtered(gut[i],j->TRANSSIZES[i][j]=a);
+	fi;
+      od;
+    fi;
+
+    # find the properties we have not stored
+    p:=[];
+    for i in [1..l] do
+      if not arglis[2*i-1] in
+	[NrMovedPoints,Size,Transitivity,SignPermGroup,IsPrimitive] then
+	Add(p,arglis{[2*i-1,2*i]}); 
       fi;
     od;
-  fi;
 
-  # find the properties we have not stored
-  p:=[];
-  for i in [1..l] do
-    if not arglis[2*i-1] in
-      [NrMovedPoints,Size,Transitivity,SignPermGroup,IsPrimitive] then
-      Add(p,arglis{[2*i-1,2*i]}); 
-    fi;
-  od;
+    for i in [1..l] do
+      a:=arglis[2*i-1];
+      b:=arglis[2*i];
 
-  for i in [1..l] do
-    a:=arglis[2*i-1];
-    b:=arglis[2*i];
-
-    # get all cheap properties first
-    if a=NrMovedPoints then
-      f:=false;
-      if IsInt(b) then
-        b:=[b];
+      # get all cheap properties first
+      if a=NrMovedPoints then
+	f:=false;
+	if IsInt(b) then
+	  b:=[b];
+	fi;
+	if IsList(b) then
+	  b:=Set(b);
+	  if not IsSubset(deg,b) then
+	    f:=true;
+	  fi;
+	  deg:=Intersection(deg,b);
+	else
+	  # b is a function (wondering, whether anyone will ever use it...)
+	  f:=true;
+	  deg:=Filtered(deg,b);
+	fi;
+      elif a=Size or a=Transitivity or a=SignPermGroup then
+	if a=Size then
+	  nr:=1;
+	elif a=Transitivity then
+	  nr:=3;
+	else
+	  nr:=4;
+	fi;
+	for i in deg do
+	  gut[i]:=Filtered(gut[i],j->STGSelFunc(TRANSProperties(i,j)[nr],b));
+	od;
+      elif a=IsPrimitive then
+	b:=NumBol(b);
+	for i in deg do
+	  gut[i]:=Filtered(gut[i],j->TRANSProperties(i,j)[2]=b);
+	od;
       fi;
-      if IsList(b) then
-        b:=Set(b);
-        if not IsSubset(deg,b) then
-          f:=true;
-        fi;
-        deg:=Intersection(deg,b);
-      else
-        # b is a function (wondering, whether anyone will ever use it...)
-        f:=true;
-        deg:=Filtered(deg,b);
-      fi;
-    elif a=Size or a=Transitivity or a=SignPermGroup then
-      if a=Size then
-        nr:=1;
-      elif a=Transitivity then
-        nr:=3;
-      else
-        nr:=4;
-      fi;
-      for i in deg do
-	gut[i]:=Filtered(gut[i],j->STGSelFunc(TRANSProperties(i,j)[nr],b));
-      od;
-    elif a=IsPrimitive then
-      b:=NumBol(b);
-      for i in deg do
-        gut[i]:=Filtered(gut[i],j->TRANSProperties(i,j)[2]=b);
-      od;
-    fi;
+    od;
   od;
 
   if f and whine then
