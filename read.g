@@ -1,6 +1,6 @@
 #############################################################################
 ##
-##  read.g                transgrp package                  Alexander Hulpke
+##  read.g                TransGrp package                  Alexander Hulpke
 ##
 ##  Copyright 2016 by the author.
 ##

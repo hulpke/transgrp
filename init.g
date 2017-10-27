@@ -1,6 +1,6 @@
 #############################################################################
 ##
-##  init.g                transgrp package                  Alexander Hulpke
+##  init.g                TransGrp package                  Alexander Hulpke
 ##
 ##  Copyright 2016 by the author.
 ##
