@@ -1,2 +1,2 @@
 #tar zcf trans32.tgz --exclude dat32/OLD dat32
-(cd ..;tar zcvf transgrp.tar.gz transgrp/{LICENSE,PackageInfo.g,data,init.g,read.g,README.txt,lib,htm} transgrp/doc/{manual.ind,manual.pdf,transgrp.tex,manual.tex})
+(cd ..;tar zcvf transgrp.tar.gz transgrp/{LICENSE,PackageInfo.g,data,init.g,read.g,README.txt,lib,htm} transgrp/doc/{manual.ind,manual.pdf,transgrp.tex,manual.tex,manual.six})
