@@ -15,6 +15,7 @@
 echo "TeXing documentation"
 # TeX the manual
 tex manual
+bibtex manual
 # TeX the manual again to incorporate the ToC ... and build the index
 tex manual; ./manualindex manual
 # Finally TeX the manual again to get cross-references right

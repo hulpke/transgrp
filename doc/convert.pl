@@ -2061,7 +2061,7 @@ unless (-d $dir and -r $dir) {
 }
 
 if ($opt_t) {
-  my ($whichtth) = `which tth`;
+  my ($whichtth) = "./tth";
   chomp($whichtth);
   if ($whichtth !~ m+/tth$+) {
     print STDERR "!! tth: not in path.\n$whichtth\n",
