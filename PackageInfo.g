@@ -17,7 +17,7 @@ Date := "3/11/2017",
 ##  the format extension(s), like '.zoo', which are given next.
 ##  The archive file name *must be changed* with each version of the archive
 ##  (and probably somehow contain the package name and version).
-ArchiveURL := "http://www.math.colostate.edu/~hulpke/transgrp/transgrp2",
+ArchiveURL := "http://www.math.colostate.edu/~hulpke/transgrp/transgrp2.0.1",
 
 ##  All provided formats as list of file extensions, separated by white
 ##  space or commas.
