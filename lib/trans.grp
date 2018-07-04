@@ -64,7 +64,7 @@ TRANSGRP := [[[(),"1 = C(1)"]],
 [(1,6,7),(2,6,7),(3,6,7),(4,6,7),(5,6,7),"A(7)"],
 [(1,7),(1,2),(2,3),(3,4),(4,5),(5,6),"S(7)"]]];
 
-if IsBound(HPCGAP) then
+if IsHPCGAP then
   LockAndMigrateObj(TRANSGRP, TRANSREGION);
 fi;
 
@@ -214,7 +214,7 @@ TRANSSELECT :=[];
 TRANSSIZES  :=[];
 TRANSPARTNUM:=[];
 
-if IsBound(HPCGAP) then
+if IsHPCGAP then
   atomic TRANSREGION do
     MigrateObj(TRANSPROPERTIES, TRANSREGION);
     MigrateObj(TRANSLENGTHS, TRANSREGION);
@@ -266,7 +266,7 @@ local Tbak,Fbak,flg,sel,i,fname,block,transdir;
       if (deg>15 and not IsPrime(deg)) or deg>30  then
 	if not IsBound(TRANSGRP[deg]) then
 	  Read(Filename(transdir,Concatenation( fname, ".grp" ) ));
-	  if IsBound(HPCGAP) then
+	  if IsHPCGAP then
 	    MigrateObj(TRANSGRP[deg], TRANSREGION);
 	    MigrateObj(TRANSPROPERTIES[deg], TRANSREGION);
 	    MigrateObj(TRANSSIZES[deg], TRANSREGION);
@@ -283,7 +283,7 @@ local Tbak,Fbak,flg,sel,i,fname,block,transdir;
 	    flg:=TRANSSELECT[deg]{[1..Length(TRANSSELECT[deg])-block/2]};
 	    sel:=Union(flg,sel);
 	    TRANSSELECT[deg]:=Difference(TRANSSELECT[deg],flg);
-	    if IsBound(HPCGAP) then
+	    if IsHPCGAP then
 	      MigrateObj(TRANSSELECT[deg], TRANSREGION);
 	    fi;
 	  fi;
@@ -298,7 +298,7 @@ local Tbak,Fbak,flg,sel,i,fname,block,transdir;
       IsString(fname);
 
       Read(Filename(transdir,Concatenation( fname, ".grp" ) ));
-      if IsBound(HPCGAP) then
+      if IsHPCGAP then
 	MigrateObj(TRANSGRP[deg], TRANSREGION);
 	MigrateObj(TRANSPROPERTIES[deg], TRANSREGION);
       fi;
@@ -451,7 +451,7 @@ InstallGlobalFunction( TransitiveGroup, function(deg,num)
 end );
 
 InstallFlushableValue(TRANSCOMBCACHE,[[0],[0],[0]]);
-if IsBound(HPCGAP) then
+if IsHPCGAP then
   LockAndMigrateObj(TRANSCOMBCACHE, TRANSREGION);
 fi;
 
@@ -477,7 +477,7 @@ local i,l;
 end);
 
 InstallFlushableValue(TRANSARRCACHE,[[0],[0],[0]]);
-if IsBound(HPCGAP) then
+if IsHPCGAP then
   LockAndMigrateObj(TRANSARRCACHE, TRANSREGION);
 fi;
 
