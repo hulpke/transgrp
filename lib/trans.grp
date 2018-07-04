@@ -214,9 +214,9 @@ TRANSSIZES  :=[];
 TRANSPARTNUM:=[];
 
 if IsHPCGAP then
+  TRANSLENGTHS:=MakeWriteOnceAtomic(TRANSLENGTHS);
   atomic TRANSREGION do
     MigrateObj(TRANSPROPERTIES, TRANSREGION);
-    MigrateObj(TRANSLENGTHS, TRANSREGION);
     MigrateObj(TRANSNONDISCRIM, TRANSREGION);
     MigrateObj(TRANSSIZES, TRANSREGION);
     MigrateObj(TRANSPARTNUM, TRANSREGION);
@@ -387,9 +387,7 @@ InstallGlobalFunction(NrTransitiveGroups, function(deg)
   if not TransitiveGroupsAvailable(deg) then
     return fail;
   fi;
-  atomic readonly TRANSREGION do
-    return TRANSLENGTHS[deg];
-  od;
+  return TRANSLENGTHS[deg];
 end);
 
 InstallGlobalFunction( TransitiveGroup, function(deg,num)
