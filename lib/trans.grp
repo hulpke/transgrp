@@ -242,7 +242,7 @@ MakeImmutable(TRANSAVAILABLE);
 MakeReadOnlyGlobal("TRANSAVAILABLE");
 
 
-BIND_GLOBAL("TransGrpLoad",function(deg,nr)
+BindGlobal("TransGrpLoad",function(deg,nr)
 local Tbak,Fbak,flg,sel,i,fname,block,transdir;
   block:=300;
   if deg=32 or deg=36 or deg=40 then block:=5000;fi;
@@ -331,7 +331,7 @@ InstallGlobalFunction(TransitiveGroupsAvailable,function(deg)
     return true;
 end);
 
-BIND_GLOBAL("TRANSGrp",function(deg,nr)
+BindGlobal("TRANSGrp",function(deg,nr)
   if not TransitiveGroupsAvailable(deg) then 
     Error("Transitive Groups of degree ",deg," are not available");
   fi;
@@ -349,7 +349,7 @@ BIND_GLOBAL("TRANSGrp",function(deg,nr)
   od;
   end);
 
-BIND_GLOBAL("TRANSProperties",function(deg,nr)
+BindGlobal("TRANSProperties",function(deg,nr)
 local l;
   if not TransitiveGroupsAvailable(deg) then 
     Error("Transitive Groups of degree ",deg," are not available");
