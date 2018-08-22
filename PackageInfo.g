@@ -150,6 +150,8 @@ Dependencies := rec(
 ## need not be included here.)
 AvailabilityTest := ReturnTrue,
 
+TestFile := "tst/testall.g",
+
 ##  If the default banner does not suffice then provide a string that is
 ##  printed when the package is loaded (not when it is autoloaded or if
 ##  command line options `-b' or `-q' are given).
