@@ -2,16 +2,11 @@
 ##
 #A  trans38.grp                 GAP group library           Alexander Hulpke
 ##
-#A  @(#)$Id:$
-##
 #Y  Copyright (C) 2014, Derek Holt, University of Warwick
 #Y  Converted by Alexander Hulpke
 ##
 ##  This file contains part of the transitive groups of degree 38
 ##
-Revision.trans38_grp:=
-"@(#)$Id:$";
-
 TRANSGRP[38]:=[];
 TRANSPROPERTIES[38]:=[];
 TRANSSELECT[38]:=[];

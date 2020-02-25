@@ -2,16 +2,11 @@
 ##
 #A  trans38a.grp                 GAP group library           Alexander Hulpke
 ##
-#A  @(#)$Id:$
-##
 #Y  Copyright (C) 2014, Derek Holt, University of Warwick
 #Y  Converted by Alexander Hulpke
 ##
 ##  This file contains part of the transitive groups of degree 38
 ##
-Revision.trans38a_grp:=
-"@(#)$Id:$";
-
 TRANSGRP[38]{[1..76]}:=
 [[(1,12,21,32,3,13,24,34,5,16,26,36,8,17,27,38,10,19,29,2,11,22,31,4,14,23,33,
 6,15,25,35,7,18,28,37,9,20,30)],
