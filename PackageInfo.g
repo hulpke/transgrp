@@ -8,7 +8,7 @@ Subtitle := "Transitive Groups Library",
 
 ##  See '?Extending: Version Numbers' in GAP help for an explanation
 ##  of valid version numbers.
-Version := "2.0.5",
+Version := "2.0.6",
 
 ##  Release date of the current version in dd/mm/yyyy format.
 ##  Note that the oh-so-clever package tools cannot deal with single digits,
