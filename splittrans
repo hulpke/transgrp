@@ -1,0 +1,200 @@
+# functions to build database 
+COPYRIGHT:="2014, Derek Holt, University of Warwick\n#Y  Converted by Alexander Hulpke\n";
+
+SetInfoLevel(InfoHomClass,1);
+
+PairForList:=function(i,dom)
+local gp,p,c,j,iso;
+  gp:=Group(i{[2..Length(i)]});
+  #Add(a,GeneratorsOfGroup(gp));
+  SetSize(gp,i[1]);
+  #Print(")",Size(gp),"\n");
+  IsNaturalAlternatingGroup(gp);
+  IsNaturalSymmetricGroup(gp);
+  IsSolvableGroup(gp);
+  p:=[i[1]];
+  if IsPrimitive(gp,dom) then
+    p[2]:=1;
+  else
+    p[2]:=0;
+  fi;
+  p[3]:=Transitivity(gp,MovedPoints(gp));
+  p[4]:=SignPermGroup(gp);
+  if IsSolvableGroup(gp) then
+    iso:=IsomorphismSpecialPcGroup(gp);
+    c:=[];
+    for j in ConjugacyClasses(Image(iso)) do
+      Add(c,ConjugacyClass(gp,PreImagesRepresentative(iso,Representative(j))));
+    od;
+    SetConjugacyClasses(gp,c);
+  fi;
+  if ValueOption("classlimit")<>fail and Size(gp)>=ValueOption("classlimit") then
+    p[5]:=false;
+  else
+    p[5]:=List(CycleStructuresGroup(gp),i->i=1);
+  fi;
+  IsBlist(p[5]);
+  p[6]:=CntOp(gp,OrbitsDomain(gp,TransCombinat(dom,2),OnSets),OnSets);
+  p[7]:=CntOp(gp,OrbitsDomain(gp,TransArrange(dom,2),OnTuples),OnTuples);
+  p[8]:=CntOp(gp,OrbitsDomain(gp,TransCombinat(dom,3),OnSets),OnSets);
+  return [GeneratorsOfGroup(gp),p];
+end;
+
+# give grps and props the same to do list
+PrintTransGrps:=function(deg,grps,props)
+local nr,sel,i,fnam,header,Make,Mapro,ss,pr,j,k,hexstr,pairs,dom,sz,unit,start,
+  schlonz;
+
+  schlonz:=Concatenation("./emilschlonz",String(deg));
+  start:=ValueOption("start");
+  if not IsPosInt(start) then
+    start:=1;
+  fi;
+  unit:=ValueOption("unit");
+  if unit=fail then
+    unit:=300;
+  fi;
+  dom:=[1..deg];
+  pairs:=fail;
+  sz:=fail;
+
+  ss:=SizeScreen();
+  if grps=fail then
+    nr:=NrTransitiveGroups(deg);
+    Make:=sel->List(sel,i->TRANSGrp(deg,i));
+  elif IsIdenticalObj(grps,props) then
+    sz:=List(grps,x->x[1]);
+    nr:=Length(grps);
+    Make:=function(sel)
+      pairs:=List(sel,i->Concatenation([i],PairForList(grps[i],dom)));
+      return List(pairs,x->x[2]);
+    end;
+    props:=i->First(pairs,x->x[1]=i)[3];
+  else
+    nr:=Length(grps);
+    Make:=function(sel)
+          local l,i;
+	    l:=List(grps{sel},ShallowCopy);
+	    for i in [1..Length(l)] do
+	      if not IsString(l[i][Length(l[i])]) then
+	        Add(l[i],Concatenation("t",String(deg),"n",String(sel[i])));
+	      fi;
+	    od;
+	    return l;
+          end;
+  fi;
+
+  if props=fail then
+    Mapro:=i->TRANSProperties(deg,i);
+  elif IsFunction(props) then
+    Mapro:=props;
+  else
+    Mapro:=i->props[i];
+  fi;
+
+  if sz=fail then sz:=List([1..nr],i->Mapro(i)[1]);fi;
+
+  if start=1 then
+    SizeScreen([80,24]);
+    fnam:=Concatenation("trans",String(deg),".grp");
+    PrintTo(schlonz,
+  "#############################################################################\n",
+  "##\n","#A  ",fnam,
+  "                 GAP group library           Alexander Hulpke\n",
+  "##\n","#A  @(#)$Id:$\n","##\n",
+  "#Y  Copyright (C) ",COPYRIGHT,
+    "##\n","##  This file contains part of the transitive groups of degree ",
+    String(deg),"\n","##\n",
+    "Revision.",ReplacedString(fnam,".","_"),":=\n  \"@(#)$Id: $\";\n\n",
+	    "TRANSGRP[",deg,"]:=[];\n",
+	    "TRANSPROPERTIES[",deg,"]:=[];\n",
+	    "TRANSSELECT[",deg,"]:=[];\n",
+	    "TRANSLENGTHS[",deg,"]:=",nr,";\n",
+	    "TRANSSIZES[",deg,"]:=",sz,";\n"
+	    );
+    Exec(Concatenation("sed \"13,$ s/ //g\" ",schlonz," >",fnam));
+  fi;
+
+  for i in [1..Int((nr-1)/unit)+1] do
+    sel:=[(i-1)*unit+1..Minimum((i*unit),nr)];
+    if sel[1]>=start then
+Print("Doing:",sel,"\n");
+      fnam:=Concatenation("trans",String(deg),
+		WordAlp("abcdefghijklmnopqrstuvwxyz",Int(i)),".grp");
+      SizeScreen([90,24]);
+      PrintTo(schlonz,
+  "#############################################################################\n",
+  "##\n","#A  ",fnam,
+  "                 GAP group library           Alexander Hulpke\n",
+  "##\n","#A  @(#)$Id:$\n","##\n",
+  "#Y  Copyright (C) ",COPYRIGHT,
+    "##\n","##  This file contains part of the transitive groups of degree ",
+    String(deg),"\n","##\n",
+    "Revision.",ReplacedString(fnam,".","_"),":=\n  \"@(#)$Id: $\";\n\n",
+	      "TRANSGRP[",deg,"]{",sel,"}:=\n",Make(sel),
+	      ";\n");
+      SizeScreen([80,24]);
+      AppendTo(schlonz,"TRANSPROPERTIES[",deg,"]{",sel,"}:=\n[");
+      for j in sel do
+	pr:=Mapro(j);
+	if IsBlist(pr[5]) then
+	  hexstr:=HexStringBlistEncode(pr[5]);
+	else
+	  hexstr:=pr[5];
+	fi;
+	AppendTo(schlonz,
+		"\n[",pr[1],",",pr[2],",",pr[3],",",pr[4],",\n\"",
+		hexstr,"\c\"\n");
+	for k in [6..Length(pr)] do
+	  AppendTo(schlonz,",",pr[k]);
+	od;
+	AppendTo(schlonz,"]");
+	if j<>sel[Length(sel)] then
+	  AppendTo(schlonz,",");
+	fi;
+      od;
+      AppendTo(schlonz,"];\n");
+      #Exec("sed \"13,$ s/true/T/g\" /tmp/emilschlonz > /tmp/emilschlonz1");
+      #Exec("sed \"13,$ s/false/F/g\" /tmp/emilschlonz1 > /tmp/emilschlonz");
+      Exec(Concatenation("sed \"13,$ s/ //g\" ",schlonz," >",fnam));
+    fi;
+  od;
+  Exec(Concatenation("rm ",schlonz));
+  SizeScreen(ss);
+end;
+
+ProcessL:=function(l)
+local a,b,gp,i,p,deg,dom,cnt;
+  deg:=NrMovedPoints(Group(Filtered(l[1],IsPerm)));
+  dom:=[1..deg];
+  a:=[];
+  b:=[];
+  cnt:=0;
+  for i in l do
+    cnt:=cnt+1;
+    Print(">",cnt,"\n");
+    p:=PairForList(i,dom);
+    Add(a,p[1]);
+    Add(b,p[2]);
+  od;
+  return [a,b];
+end;
+
+ProcessLInto:=function(l,pairs)
+local a,b,gp,i,p,deg,dom,cnt;
+  deg:=NrMovedPoints(Group(Filtered(l[1],IsPerm)));
+  dom:=[1..deg];
+  a:=pairs[1];
+  b:=pairs[2];
+  cnt:=0;
+  for i in l do
+    cnt:=cnt+1;
+    Print(">",cnt,"\n");
+    if not IsBound(a[cnt]) then
+      p:=PairForList(i,dom);
+      Add(a,p[1]);
+      Add(b,p[2]);
+    fi;
+  od;
+  return [a,b];
+end;
