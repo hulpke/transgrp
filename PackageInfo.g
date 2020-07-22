@@ -89,6 +89,11 @@ PackageInfoURL := "https://www.math.colostate.edu/~hulpke/transgrp/PackageInfo.g
 AbstractHTML := "The <span class=\"transgrp\">TransGrp</span> package provides \
 the library of transitive groups.",
 
+SourceRepository := rec(
+    Type := "git",
+    URL := Concatenation( "https://github.com/hulpke/", LowercaseString( ~.PackageName ) ),
+),
+IssueTrackerURL := Concatenation( ~.SourceRepository.URL, "/issues" ),
 PackageWWWHome := "https://www.math.colostate.edu/~hulpke/transgrp",
                   
 ##  On the GAP Website there is an online version of all manuals in the
