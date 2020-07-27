@@ -8,12 +8,12 @@ Subtitle := "Transitive Groups Library",
 
 ##  See '?Extending: Version Numbers' in GAP help for an explanation
 ##  of valid version numbers.
-Version := "2.0.6",
+Version := "3.0",
 
 ##  Release date of the current version in dd/mm/yyyy format.
 ##  Note that the oh-so-clever package tools cannot deal with single digits,
 ##  but will whine.
-Date := "28/02/2020",
+Date := "01/08/2020",
 
 ##  URL of the archive(s) of the current package release, but *without*
 ##  the format extension(s), like '.zoo', which are given next.
@@ -90,10 +90,11 @@ AbstractHTML := "The <span class=\"transgrp\">TransGrp</span> package provides \
 the library of transitive groups.",
 
 SourceRepository := rec(
-    Type := "git",
-    URL := Concatenation( "https://github.com/hulpke/", LowercaseString( ~.PackageName ) ),
+  Type := "git",
+  URL := Concatenation("https://github.com/hulpke/", 
+         LowercaseString(~.PackageName)),
 ),
-IssueTrackerURL := Concatenation( ~.SourceRepository.URL, "/issues" ),
+IssueTrackerURL := Concatenation(~.SourceRepository.URL,"/issues"),
 PackageWWWHome := "https://www.math.colostate.edu/~hulpke/transgrp",
                   
 ##  On the GAP Website there is an online version of all manuals in the
