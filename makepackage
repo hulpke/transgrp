@@ -1,5 +1,5 @@
 #tar zcf trans32.tgz --exclude dat32/OLD dat32
-(cd ..;COPYFILE_DISABLE=1 tar zcvf transgrp.tar.gz transgrp/{LICENSE,PackageInfo.g,data,init.g,read.g,README.md,lib,htm} transgrp/doc/{manual.ind,manual.pdf,transgrp.tex,manual.tex,manual.six,manual.bbl} transgrp/tst/*)
+(cd ..;COPYFILE_DISABLE=1 tar zcvf transgrp.tar.gz transgrp/{LICENSE,PackageInfo.g,data,init.g,read.g,README.md,lib,htm} transgrp/doc/{manual.ind,manual.pdf,transgrp.tex,manual.tex,manual.six,manual.bbl,make_doc,manual.bib,manual.mst} transgrp/tst/*)
 mv ../transgrp.tar.gz `grep "^Version" PackageInfo.g | awk -F\" '{print "../transgrp" $2 ".tar.gz"}'`
 cp README.md ~/Creative/Homepage/transgrp/README.txt
 cp PackageInfo.g ~/Creative/Homepage/transgrp/
