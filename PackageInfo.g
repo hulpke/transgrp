@@ -13,7 +13,7 @@ Version := "3.2",
 ##  Release date of the current version in dd/mm/yyyy format.
 ##  Note that the oh-so-clever package tools cannot deal with single digits,
 ##  but will whine.
-Date := "05/17/2021",
+Date := "17/05/2021",
 
 ##  URL of the archive(s) of the current package release, but *without*
 ##  the format extension(s), like '.zoo', which are given next.
