@@ -8,12 +8,12 @@ Subtitle := "Transitive Groups Library",
 
 ##  See '?Extending: Version Numbers' in GAP help for an explanation
 ##  of valid version numbers.
-Version := "3.3",
+Version := "3.5",
 
 ##  Release date of the current version in dd/mm/yyyy format.
 ##  Note that the oh-so-clever package tools cannot deal with single digits,
 ##  but will whine.
-Date := "01/06/2021",
+Date := "11/02/2022",
 
 ##  URL of the archive(s) of the current package release, but *without*
 ##  the format extension(s), like '.zoo', which are given next.
