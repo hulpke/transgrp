@@ -274,12 +274,16 @@ TRANSAVAILABLE:=BlistList([1..50],[2..7]);
 CallFuncList(function()
   local dir,fnam,tradeg;
   for tradeg in [8..48] do
+    fnam:=Concatenation("trans",String(tradeg),".grp");
     if tradeg=32 then
       dir:= DirectoriesPackageLibrary( "transgrp", "dat32" );
+    elif tradeg=48 then
+      dir:= DirectoriesPackageLibrary( "transgrp", "dat48" );
+      fnam:="TransitiveGroupsOfDegree48_1959.gz";
     else
       dir:= DirectoriesPackageLibrary( "transgrp", "data" );
     fi;
-    fnam:=Filename( dir, Concatenation("trans",String(tradeg),".grp"));
+    fnam:=Filename( dir, fnam);
     if fnam<>fail and IsReadableFile(fnam) then
       TRANSAVAILABLE[tradeg]:=true;
     fi;
@@ -295,6 +299,11 @@ local Tbak,Fbak,flg,sel,i,fname,block,transdir;
   if deg=32 or deg=36 or deg=40 then block:=5000;fi;
   if deg=32 then
     transdir:= DirectoriesPackageLibrary( "transgrp", "dat32" ); 
+  elif deg=48 then 
+    atomic TRANSREGION do
+      TRANSLENGTHS[48]:=195826352;
+    od;
+    return;
   else
     transdir:= DirectoriesPackageLibrary( "transgrp", "data" ); 
   fi;
@@ -452,13 +461,39 @@ InstallGlobalFunction(NrTransitiveGroups, function(deg)
   return TRANSLENGTHS[deg];
 end);
 
+# This function is mostly due to Jesse Lansdown and Gordon F. Royle
+BindGlobal("TransitiveGroup48",function(id)
+    local file_number, pos, strm, i, x, g;
+    file_number := QuoInt(id-1, 100000)+1;;
+    pos := (id-1) mod 100000 + 1;
+
+    strm:=Filename(DirectoriesPackageLibrary( "transgrp", "dat48" ),
+      Concatenation("TransitiveGroupsOfDegree48_", String(file_number),
+      ".gz"));
+    strm := InputTextFile(strm);
+    for i in [1 .. pos+14] do
+        x:=ReadLine(strm);;
+    od;
+    x:=EvalString(x);;
+    CloseStream(strm);;
+    if x[1] <> id then
+        Error("Somehow we got the wrong group!!!\n");
+    else
+        g:=Group(x[2]);;
+        SetTransitiveIdentification(g, id);;
+        return g;
+    fi;
+end);
+
 InstallGlobalFunction( TransitiveGroup, function(deg,num)
   local gens,i,l,g,s;
   if deg=1 then
     return fail;
-  fi;
-  if not TransitiveGroupsAvailable(deg) then
+  elif not TransitiveGroupsAvailable(deg) then
     Error("Transitive Groups of degree ",deg," are not available");
+  fi;
+  if deg=48 then
+    return TransitiveGroup48(num);
   fi;
   atomic TRANSREGION do
     if not (num in [1..TRANSLENGTHS[deg]]) then
@@ -633,6 +668,9 @@ local dom,p,s,t,a,cand,i,grp,deg,aiso,piso,co,cheap;
     Error("Group must operate transitively");
   fi;
   deg:=Length(dom);
+  if deg=48 then
+    Error("Identification of the groups of degree 48 is not available");
+  fi;
   atomic TRANSREGION do
     if not IsBound(TRANSLENGTHS[deg]) then
       TransGrpLoad(deg,0);
@@ -846,6 +884,10 @@ local i,j,a,b,l,p,deg,gut,g,grp,nr,f;
       f:=true; #warnung weil kein Degree angegeben ?
     fi;
     gut:=[];
+    if 48 in deg then
+      Info(InfoWarning,1,"Selection of groups of degree 48 is not available");
+      deg:=Filtered(deg,x->x<>48);
+    fi;
     for i in deg do
       if not IsBound(TRANSLENGTHS[i]) then
 	TransGrpLoad(i,0);
