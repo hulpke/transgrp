@@ -12,8 +12,8 @@ true
 
 # NrTransitiveGroups
 #
-gap> Sum([2..47],NrTransitiveGroups);
-3302368
+gap> Sum([2..31],NrTransitiveGroups)+Sum([33..47],NrTransitiveGroups);
+501044
 
 # AllTransitiveGroups
 # 
@@ -54,9 +54,10 @@ gap> for n in [2..15] do
 >      fi;
 >   od;
 > od;
-gap> g:=List([10..47],x->TransitiveGroup(x,Int(2/3*NrTransitiveGroups(x))));;
+gap> g:=List(Filtered([10..47],x->x<>32),
+> x->TransitiveGroup(x,Int(2/3*NrTransitiveGroups(x))));;
 gap> Sum(g,Size);
-68802330594
+68802199522
 gap> g:=Filtered(g,x->not NrMovedPoints(x) in [32,36,40]);;
 gap> i:=List(g,TransitiveIdentification);;
 gap> h:=List(g,x->Group(GeneratorsOfGroup(x)));;
