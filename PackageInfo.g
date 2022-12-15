@@ -15,6 +15,9 @@ Version := "3.6.3",
 ##  but will whine.
 Date := "19/07/2022",
 
+##  Licensing terms as a machine readable SPDX identifier
+License := "Artistic-2.0 AND (GPL-2.0-only OR GPL-3.0-only)",
+
 ##  URL of the archive(s) of the current package release, but *without*
 ##  the format extension(s), like '.zoo', which are given next.
 ##  The archive file name *must be changed* with each version of the archive
