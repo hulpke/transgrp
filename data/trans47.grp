@@ -9,8 +9,6 @@
 ##
 ##  This file contains part of the transitive groups of degree 47
 ##
-Revision.trans47_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[47]:=[];
 TRANSPROPERTIES[47]:=[];

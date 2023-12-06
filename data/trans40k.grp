@@ -9,8 +9,6 @@
 ##
 ##  This file contains part of the transitive groups of degree 40
 ##
-Revision.trans40k_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[40]{[50001..55000]}:=
 [[(1,16,28,20,31,22,36,7,40,12)(2,15,27,19,32,21,35,8,39,11)(3,14,26,17,30,24,33,

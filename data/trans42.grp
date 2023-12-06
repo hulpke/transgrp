@@ -9,8 +9,6 @@
 ##
 ##  This file contains part of the transitive groups of degree 42
 ##
-Revision.trans42_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[42]:=[];
 TRANSPROPERTIES[42]:=[];

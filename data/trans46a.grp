@@ -9,8 +9,6 @@
 ##
 ##  This file contains part of the transitive groups of degree 46
 ##
-Revision.trans46a_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[46]{[1..56]}:=
 [[(1,33,19,6,38,23,9,41,27,13,46,31,18,3,36,22,7,40,26,11,43,30,15,2,34,20,5,

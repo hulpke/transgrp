@@ -9,8 +9,6 @@
 ##
 ##  This file contains part of the transitive groups of degree 40
 ##
-Revision.trans40af_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[40]{[155001..160000]}:=
 [[(1,38,7,28,2,37,8,27)(3,40,5,25,4,39,6,26)(9,34,20,32)(10,33,19,31)

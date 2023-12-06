@@ -9,8 +9,6 @@
 ##
 ##  This file contains part of the transitive groups of degree 44
 ##
-Revision.trans44a_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[44]{[1..300]}:=
 [[(1,31,18,4,33,19,5,35,22,7,38,24,10,40,26,12,41,28,13,43,30,15,2,32,17,3,34,

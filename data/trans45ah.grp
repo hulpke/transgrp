@@ -9,8 +9,6 @@
 ##
 ##  This file contains part of the transitive groups of degree 45
 ##
-Revision.trans45ah_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[45]{[9901..10200]}:=
 [[(1,8,22,2,9,24,3,7,23)(4,20,34,6,21,36)(5,19,35)(10,43,14)(11,44,15,12,45,
