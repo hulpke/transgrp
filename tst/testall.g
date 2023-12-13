@@ -4,6 +4,8 @@
 # This file runs package tests. It is also referenced in the package
 # metadata in PackageInfo.g.
 #
+LoadPackage( "gapdoc" );
+LoadPackage( "smallgrp" );
 LoadPackage( "transgrp" );
 
 TestDirectory(DirectoriesPackageLibrary( "transgrp", "tst" ),
