@@ -9,8 +9,6 @@
 ##
 ##  This file contains part of the transitive groups of degree 40
 ##
-Revision.trans40_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[40]:=[];
 TRANSPROPERTIES[40]:=[];

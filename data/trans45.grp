@@ -9,8 +9,6 @@
 ##
 ##  This file contains part of the transitive groups of degree 45
 ##
-Revision.trans45_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[45]:=[];
 TRANSPROPERTIES[45]:=[];

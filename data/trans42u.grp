@@ -9,8 +9,6 @@
 ##
 ##  This file contains part of the transitive groups of degree 42
 ##
-Revision.trans42u_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[42]{[6001..6300]}:=
 [[(1,40,32,27,28,14,3,42,31,26,30,15,2,41,33,25,29,13)(4,9,34,23,21,12,6,7,36,

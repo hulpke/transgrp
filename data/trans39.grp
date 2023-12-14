@@ -9,8 +9,6 @@
 ##
 ##  This file contains part of the transitive groups of degree 39
 ##
-Revision.trans39_grp:=
-"@(#)$Id:$";
 
 TRANSGRP[39]:=[];
 TRANSPROPERTIES[39]:=[];
