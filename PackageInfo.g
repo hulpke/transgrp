@@ -8,12 +8,12 @@ Subtitle := "Transitive Groups Library",
 
 ##  See '?Extending: Version Numbers' in GAP help for an explanation
 ##  of valid version numbers.
-Version := "3.6.4",
+Version := "3.6.5",
 
 ##  Release date of the current version in dd/mm/yyyy format.
 ##  Note that the oh-so-clever package tools cannot deal with single digits,
 ##  but will whine.
-Date := "03/02/2023",
+Date := "15/12/2023",
 
 ##  Licensing terms as a machine readable SPDX identifier
 License := "Artistic-2.0 AND (GPL-2.0-only OR GPL-3.0-only)",
